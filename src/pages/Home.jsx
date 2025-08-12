@@ -215,12 +215,49 @@
 //     </div>
 //   );
 // }
+
+
+
 import React, { useState } from "react";
 import "./home.css";
-
 export default function Home() {
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState({ todo: [], ongoing: [], completed: [] });
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // Global CSS reset
+  React.useEffect(() => {
+    // Apply global styles to body
+    document.body.style.margin = '0px';
+    document.body.style.padding = '0px';
+    document.body.style.boxSizing = 'border-box';
+    document.documentElement.style.margin = '0px';
+    document.documentElement.style.padding = '0px';
+    
+    // Apply to all elements
+    const style = document.createElement('style');
+    style.textContent = `
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Handle resize for responsive
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup on unmount
+    return () => {
+      document.head.removeChild(style);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
   
   const handleInputChange = (e) => {
     setTask(e.target.value);
@@ -259,13 +296,14 @@ export default function Home() {
     <div style={{
       minHeight: '100vh',
       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      padding: '20px 0',
+      padding: '0',
+      margin: '0',
       fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
     }}>
       <div style={{
         maxWidth: '1200px',
         margin: 'auto',
-        padding: '0 20px'
+        padding: '20px'
       }}>
         {/* Header Section */}
         <div style={{
@@ -288,7 +326,7 @@ export default function Home() {
             margin: '0',
             fontWeight: '300'
           }}>
-            AUSTRATECH
+            Organize your tasks with style
           </p>
         </div>
 
@@ -306,7 +344,8 @@ export default function Home() {
             style={{
               display: 'flex',
               gap: '15px',
-              alignItems: 'center'
+              alignItems: 'center',
+              flexDirection: isMobile ? 'column' : 'row'
             }}
           >
             <input
@@ -316,13 +355,15 @@ export default function Home() {
               onChange={handleInputChange}
               style={{
                 flex: '1',
-                padding: '16px 20px',
+                padding: isMobile ? '14px 16px' : '16px 20px',
                 border: '2px solid #e1e5e9',
                 borderRadius: '12px',
                 outline: 'none',
-                fontSize: '1rem',
+                fontSize: isMobile ? '0.95rem' : '1rem',
                 transition: 'all 0.3s ease',
-                background: 'white'
+                background: 'white',
+                width: isMobile ? '100%' : 'auto',
+                minWidth: isMobile ? '280px' : 'auto'
               }}
               onFocus={(e) => e.target.style.borderColor = '#667eea'}
               onBlur={(e) => e.target.style.borderColor = '#e1e5e9'}
@@ -339,14 +380,15 @@ export default function Home() {
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 color: 'white',
                 border: 'none',
-                padding: '16px 32px',
+                padding: isMobile ? '14px 24px' : '16px 32px',
                 borderRadius: '12px',
                 cursor: 'pointer',
-                fontSize: '1rem',
+                fontSize: isMobile ? '0.95rem' : '1rem',
                 fontWeight: '600',
                 transition: 'all 0.3s ease',
                 boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
-                minWidth: '140px'
+                minWidth: isMobile ? '100%' : '140px',
+                width: isMobile ? '100%' : 'auto'
               }}
               onMouseOver={(e) => {
                 e.target.style.transform = 'translateY(-2px)';
